@@ -1,0 +1,13 @@
+{
+  "name": "web-luanna-nutri",
+  "version": "1.0.0",
+  "description": "Pagina de links - Dra. Luanna Procopio",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i styles.css -o output.css --watch",
+    "build": "npx @tailwindcss/cli -i styles.css -o output.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "tailwindcss": "^4.0.0"
+  }
+}

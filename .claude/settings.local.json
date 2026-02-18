@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(dir:*)",
+      "Bash(bash scripts/build.sh:*)",
+      "Bash(bash -x scripts/build.sh)",
+      "Bash(xxd:*)",
+      "Bash(python -c:*)",
+      "Bash(node -e:*)",
+      "Bash(tr:*)",
+      "Bash(python3:*)"
+    ]
+  }
+}

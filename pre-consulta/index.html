@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f3e2db" />
+    <title>Pré-Consulta - Dra. Luanna Procópio</title>
+    <meta
+      name="description"
+      content="Formulário de pré-consulta nutricional - Dra. Luanna Procópio"
+    />
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../public/assets/images/favicon.svg" />
+
+    <!-- Tailwind CSS compilado -->
+    <link rel="stylesheet" href="../output.css" />
+  </head>
+
+  <body style="background-color: var(--color-blush)">
+    <!-- ==========================================
+         BARRA DE PROGRESSO
+         ========================================== -->
+    <div
+      id="progress-bar"
+      class="fixed top-0 left-0 right-0 h-1 z-50 hidden"
+      style="background-color: var(--color-cream)"
+    >
+      <div
+        id="progress-fill"
+        class="h-full transition-all duration-300"
+        style="width: 0%; background-color: var(--color-rose)"
+      ></div>
+    </div>
+
+    <!-- ==========================================
+         TELA DE BOAS-VINDAS
+         ========================================== -->
+    <div id="welcome-screen">
+      <div
+        class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-4"
+      >
+        <div class="w-full max-w-3xl lg:max-w-xl text-center">
+          <!-- Logo -->
+          <img
+            src="../public/assets/images/logo.svg"
+            alt="Dra. Luanna Procópio"
+            class="mx-auto mb-8 w-38 sm:w-40 lg:w-38"
+          />
+
+          <!-- Titulo -->
+          <h1
+            class="text-3xl sm:text-4xl lg:text-3xl font-bold leading-tight mb-4 form-gradient-text"
+          >
+            Formulário pré consulta
+          </h1>
+
+          <!-- Descricao -->
+          <p
+            class="text-base sm:text-lg lg:text-base mb-8"
+            style="color: var(--color-text-primary)"
+          >
+            Preencha o questionário abaixo para que eu possa te conhecer melhor
+            antes da nossa consulta. Leva apenas alguns minutos!
+          </p>
+
+          <!-- Botao Iniciar -->
+          <button
+            id="btn-start"
+            class="px-8 py-3 sm:py-4 lg:py-3 rounded-xl lg:rounded-lg text-base sm:text-lg lg:text-base font-semibold cursor-pointer transition-opacity hover:opacity-90"
+            style="
+              background-color: var(--color-rose);
+              color: var(--color-text-light);
+            "
+          >
+            Iniciar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         TELA DO FORMULÁRIO
+         ========================================== -->
+    <div id="form-screen" class="hidden">
+      <!-- Container centralizado -->
+      <div
+        class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-4 pb-24 sm:pb-6"
+      >
+        <div class="w-full max-w-3xl lg:max-w-xl step-animate" id="step-wrapper">
+          <!-- Numero do step -->
+          <div
+            id="step-number"
+            class="text-sm sm:text-base lg:text-sm font-semibold mb-2"
+            style="color: var(--color-text-primary)"
+          ></div>
+
+          <!-- Pergunta -->
+          <h2
+            id="step-question"
+            class="text-xl sm:text-2xl lg:text-lg font-bold leading-tight mb-1"
+            style="color: var(--color-text-primary)"
+          ></h2>
+
+          <!-- Label opcional -->
+          <p
+            id="step-optional"
+            class="text-sm mb-4 hidden"
+            style="color: var(--color-text-primary); opacity: 0.6"
+          >
+            (opcional)
+          </p>
+
+          <!-- Spacer quando nao e opcional -->
+          <div id="step-spacer" class="mb-4"></div>
+
+          <!-- Conteudo do step (input/radio/textarea) -->
+          <div id="step-content" class="mb-6"></div>
+
+          <!-- Erro de validacao -->
+          <p
+            id="step-error"
+            class="text-sm mt-2 hidden"
+            style="color: #ef4444"
+          ></p>
+
+          <!-- Navegacao Desktop -->
+          <div
+            id="nav-desktop"
+            class="hidden sm:flex items-center gap-3 mt-6"
+          >
+            <!-- Botao Voltar -->
+            <button
+              id="btn-prev-desktop"
+              class="px-5 py-2.5 lg:py-2 rounded-xl lg:rounded-lg text-sm sm:text-base lg:text-sm font-medium cursor-pointer transition-opacity hover:opacity-80 hidden"
+              style="
+                border: 2px solid var(--color-blush);
+                background: transparent;
+                color: var(--color-text-primary);
+              "
+            >
+              Voltar
+            </button>
+
+            <!-- Botao OK/Enviar -->
+            <button
+              id="btn-next-desktop"
+              class="px-6 py-2.5 lg:py-2 rounded-xl lg:rounded-lg text-sm sm:text-base lg:text-sm font-semibold cursor-pointer transition-opacity hover:opacity-90"
+              style="
+                background-color: var(--color-rose);
+                color: var(--color-text-light);
+              "
+            >
+              OK
+            </button>
+
+            <!-- Hint Enter (apenas step 1) -->
+            <span
+              id="enter-hint"
+              class="text-xs ml-2 flex items-center gap-1 hidden"
+              style="color: var(--color-text-primary); opacity: 0.5"
+            >
+              pressione <strong>Enter</strong> ↵
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegacao Mobile (fixed bottom) -->
+      <div
+        id="nav-mobile"
+        class="sm:hidden fixed bottom-0 left-0 right-0 p-4 flex items-center gap-3 z-40"
+        style="background-color: var(--color-blush)"
+      >
+        <!-- Botao Voltar Mobile -->
+        <button
+          id="btn-prev-mobile"
+          class="w-12 h-12 rounded-xl flex items-center justify-center cursor-pointer transition-opacity hover:opacity-80 hidden"
+          style="
+            border: 2px solid var(--color-blush);
+            background: transparent;
+          "
+        >
+          <!-- ChevronLeft SVG -->
+          <svg
+            class="w-5 h-5"
+            style="color: var(--color-text-primary)"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
+        <!-- Botao OK/Enviar Mobile -->
+        <button
+          id="btn-next-mobile"
+          class="flex-1 py-3.5 rounded-xl text-base font-semibold cursor-pointer transition-opacity hover:opacity-90"
+          style="
+            background-color: var(--color-rose);
+            color: var(--color-text-light);
+          "
+        >
+          OK
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         TELA DE SUCESSO
+         ========================================== -->
+    <div id="success-screen" class="hidden">
+      <div
+        class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-4"
+      >
+        <div class="w-full max-w-3xl lg:max-w-xl text-center step-animate">
+          <!-- Check icon -->
+          <div
+            class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+            style="background-color: var(--color-rose)"
+          >
+            <svg
+              class="w-8 h-8"
+              style="color: var(--color-text-light)"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+
+          <!-- Titulo -->
+          <h1
+            class="text-2xl sm:text-3xl lg:text-2xl font-bold leading-tight mb-4 form-gradient-text"
+          >
+            Pré-consulta enviada com sucesso!
+          </h1>
+
+          <!-- Descricao -->
+          <p
+            class="text-base sm:text-lg lg:text-base"
+            style="color: var(--color-text-primary)"
+          >
+            Obrigada por preencher o formulário. Seus dados foram enviados e
+            serão analisados antes da sua consulta.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../public/js/pre-consulta.js" defer></script>
+  </body>
+</html>

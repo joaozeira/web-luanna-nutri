@@ -1,0 +1,3 @@
+[build]
+  command = "chmod +x node_modules/.bin/tailwindcss 2>/dev/null; npx @tailwindcss/cli -i styles.css -o output.css --minify"
+  publish = "."

@@ -22,6 +22,24 @@
 
     <!-- Tailwind CSS compilado -->
     <link rel="stylesheet" href="../output.css" />
+    <style>
+      /* Background específico para a página de links: móvel por padrão, desktop em telas maiores */
+      .hero-bg {
+        background-image: url('../public/assets/images/backgroun-luanna-mobile.webp');
+        /* fixed image width (max-width) and fixed height */
+        background-size: cover;
+        background-position: center top;
+        background-repeat: no-repeat;
+      }
+
+      @media (min-width: 1024px) {
+        .hero-bg {
+          background-image: url('../public/assets/images/backgroun-luanna.webp');
+          background-size: cover;
+          background-position: center top;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -34,24 +52,24 @@
            HERO SECTION
            ========================================== -->
       <section
-        class="relative h-[75vh] w-full overflow-hidden flex flex-col justify-end"
-        style="background-color: var(--bg-hero)"
+        class="relative w-full overflow-hidden flex flex-col justify-end hero-bg"
+        style="background-color: var(--bg-hero); height: 90vh;"
       >
         <!-- Conteudo textual -->
         <div
-          class="relative z-10 max-w-7xl mx-auto w-full px-4 lg:px-12 pb-36 flex flex-col items-center text-center"
+          class="relative z-10 max-w-5xl mx-auto w-full px-4 lg:px-12 pb-24 flex flex-col items-center text-center"
         >
             <!-- Logo -->
             <img
               src="../public/assets/images/logo.svg"
               alt="Logo Dra. Luanna Procópio"
-              class="w-32 sm:w-36 lg:w-44 mb-4 animate-fade-in opacity-0"
+              class="w-32 sm:w-36 lg:w-44 mb-3 animate-fade-in opacity-0"
               style="animation-delay: 0.1s; animation-fill-mode: both"
             />
 
             <!-- Descricao -->
             <p
-              class="mt-4 text-base sm:text-lg max-w-lg animate-fade-in opacity-0"
+              class="mt-3 text-base sm:text-lg max-w-lg animate-fade-in opacity-0"
               style="
                 color: var(--color-text-primary);
                 animation-delay: 0.4s;
@@ -71,7 +89,7 @@
             >
               <button
                 id="scroll-btn"
-                class="group shimmer-effect w-12 h-12 rounded-xl flex items-center justify-center cursor-pointer"
+                class="group shimmer-effect w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer"
                 style="background-color: var(--color-rose)"
                 aria-label="Rolar para links"
               >

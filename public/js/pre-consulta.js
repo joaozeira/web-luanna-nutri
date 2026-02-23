@@ -16,11 +16,11 @@ const steps = [
     placeholder: "Digite seu nome completo...",
   },
   {
-    id: "idade",
-    type: "number",
-    field: "idade",
-    question: (data) => `${data.nome || ""}, qual a sua idade?`,
-    placeholder: "Digite sua idade...",
+    id: "dataNascimento",
+    type: "date",
+    field: "dataNascimento",
+    question: (data) => `${data.nome || ""}, qual a sua data de nascimento?`,
+    placeholder: "DD/MM/AAAA",
   },
   {
     id: "sexo",
@@ -305,6 +305,7 @@ function cacheElements() {
   elements.stepNumber = $("step-number");
   elements.stepQuestion = $("step-question");
   elements.stepOptional = $("step-optional");
+  elements.stepHint = $("step-hint");
   elements.stepSpacer = $("step-spacer");
   elements.stepContent = $("step-content");
   elements.stepError = $("step-error");
@@ -333,6 +334,19 @@ function getCurrentStep() {
 // ============================================
 // LOCALSTORAGE (limpar dados antigos)
 // ============================================
+
+function saveFormData() {
+  try {
+    localStorage.setItem("pre-consulta-form-data", JSON.stringify(formData));
+    localStorage.setItem("pre-consulta-current-step", String(currentStepIndex));
+    const step = getCurrentStep();
+    if (step) {
+      localStorage.setItem("pre-consulta-current-step-id", step.id);
+    }
+  } catch (e) {
+    // silently fail
+  }
+}
 
 function clearFormStorage() {
   try {
@@ -365,6 +379,12 @@ function isFieldValid(step) {
 
   if (step.type === "radio" && step.multiple) {
     if (!Array.isArray(value) || value.length === 0) return false;
+  } else if (step.type === "date") {
+    if (!value || !/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return false;
+    const [d, m, y] = value.split("/").map(Number);
+    const date = new Date(y, m - 1, d);
+    if (date.getDate() !== d || date.getMonth() !== m - 1 || date.getFullYear() !== y) return false;
+    if (date > new Date() || y < 1900) return false;
   } else if (step.type === "number") {
     const num = parseInt(value, 10);
     if (isNaN(num) || num <= 0) return false;
@@ -418,9 +438,22 @@ function renderStep() {
   // Label opcional
   if (step.optional) {
     elements.stepOptional.classList.remove("hidden");
-    elements.stepSpacer.classList.add("hidden");
   } else {
     elements.stepOptional.classList.add("hidden");
+  }
+
+  // Dica de multipla escolha
+  if (step.type === "radio" && step.multiple) {
+    elements.stepHint.textContent = "Selecione uma ou mais opções";
+    elements.stepHint.classList.remove("hidden");
+  } else {
+    elements.stepHint.classList.add("hidden");
+  }
+
+  // Spacer quando nao tem labels abaixo da pergunta
+  if (step.optional || (step.type === "radio" && step.multiple)) {
+    elements.stepSpacer.classList.add("hidden");
+  } else {
     elements.stepSpacer.classList.remove("hidden");
   }
 
@@ -436,6 +469,9 @@ function renderStep() {
       break;
     case "number":
       html = renderNumberInput(step);
+      break;
+    case "date":
+      html = renderDateInput(step);
       break;
     case "textarea":
       html = renderTextarea(step);
@@ -456,7 +492,7 @@ function renderStep() {
   bindStepEvents(step);
 
   // Auto-focus em inputs
-  if (step.type === "text" || step.type === "number" || step.type === "textarea") {
+  if (step.type === "text" || step.type === "number" || step.type === "date" || step.type === "textarea") {
     const input = elements.stepContent.querySelector("input, textarea");
     if (input) {
       setTimeout(() => input.focus(), 50);
@@ -483,6 +519,13 @@ function renderNumberInput(step) {
   const escaped = escapeHtml(String(value));
   const placeholder = step.placeholder ? `placeholder="${escapeHtml(step.placeholder)}"` : "";
   return `<input type="number" class="form-input" data-field="${step.field}" value="${escaped}" ${placeholder} autocomplete="off" inputmode="numeric" />`;
+}
+
+function renderDateInput(step) {
+  const value = formData[step.field] || "";
+  const escaped = escapeHtml(value);
+  const placeholder = step.placeholder ? `placeholder="${escapeHtml(step.placeholder)}"` : "";
+  return `<input type="text" class="form-input" data-field="${step.field}" value="${escaped}" ${placeholder} autocomplete="off" inputmode="numeric" maxlength="10" />`;
 }
 
 function renderTextarea(step) {
@@ -552,6 +595,25 @@ function bindStepEvents(step) {
       input.addEventListener("input", (e) => {
         formData[step.field] = e.target.value;
 
+        updateNavButtons();
+      });
+    }
+  }
+
+  // Date input (mascara DD/MM/AAAA)
+  if (step.type === "date") {
+    const input = elements.stepContent.querySelector("input");
+    if (input) {
+      input.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "");
+        if (v.length > 8) v = v.slice(0, 8);
+        if (v.length >= 5) {
+          v = v.slice(0, 2) + "/" + v.slice(2, 4) + "/" + v.slice(4);
+        } else if (v.length >= 3) {
+          v = v.slice(0, 2) + "/" + v.slice(2);
+        }
+        e.target.value = v;
+        formData[step.field] = v;
         updateNavButtons();
       });
     }
@@ -742,8 +804,10 @@ function handlePrevious() {
 
 function showError(step) {
   let msg = "Campo obrigatório";
-  if (step.type === "number") {
-    msg = "Digite uma idade válida";
+  if (step.type === "date") {
+    msg = "Digite uma data de nascimento válida";
+  } else if (step.type === "number") {
+    msg = "Digite um valor válido";
   } else if (step.type === "radio" && step.multiple) {
     msg = "Selecione pelo menos uma opção";
   } else if (step.type === "radio") {
